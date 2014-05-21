@@ -262,15 +262,17 @@ seafile_put_file (SearpcClient *client,
                   const char *file_name,
                   const char *user,
                   const char *head_id,
+                  int create,
                   GError **error)
 {
     return searpc_client_call__string (client, "seafile_put_file", error,
-                                    6, "string", repo_id,
-                                    "string", file_path,
-                                    "string", parent_dir,
-                                    "string", file_name,
-                                    "string", user,
-                                    "string", head_id);
+                                       7, "string", repo_id,
+                                       "string", file_path,
+                                       "string", parent_dir,
+                                       "string", file_name,
+                                       "string", user,
+                                       "string", head_id,
+                                       "int", create);
 }
 
 char *
@@ -283,17 +285,19 @@ seafile_put_file_blocks (SearpcClient *client,
                          const char *user,
                          const char *head_id,
                          gint64 file_size,
+                         int create,
                          GError **error)
 {
     return searpc_client_call__string (client, "seafile_put_file_blocks", error,
-                                       8, "string", repo_id,
+                                       9, "string", repo_id,
                                        "string", parent_dir,
                                        "string", file_name,
                                        "string", blockids_json,
                                        "string", paths_json,
                                        "string", user,
                                        "string", head_id,
-                                       "int64", &file_size);
+                                       "int64", &file_size,
+                                       "int", create);
 }
 
 int

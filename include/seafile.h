@@ -97,6 +97,7 @@ seafile_put_file (SearpcClient *client,
                   const char *file_name,
                   const char *user,
                   const char *head_id,
+                  int create,
                   GError **error);
 
 char *
@@ -109,6 +110,7 @@ seafile_put_file_blocks (SearpcClient *client,
                          const char *user,
                          const char *head_id,
                          gint64 file_size,
+                         int create,
                          GError **error);
 
 

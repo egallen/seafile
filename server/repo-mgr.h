@@ -260,6 +260,7 @@ seaf_repo_manager_revert_on_server (SeafRepoManager *mgr,
  * @parent_dir:     the directory to add this file
  * @file_name:      the name of the new file
  * @user:           author of this operation
+ * @new_file_id     the return location of the new file id
  */
 int
 seaf_repo_manager_post_file (SeafRepoManager *mgr,
@@ -268,6 +269,7 @@ seaf_repo_manager_post_file (SeafRepoManager *mgr,
                              const char *parent_dir,
                              const char *file_name,
                              const char *user,
+                             char **new_file_id,
                              GError **error);
 
 int
@@ -313,6 +315,7 @@ seaf_repo_manager_post_dir (SeafRepoManager *mgr,
  * @params: same as seaf_repo_manager_post_file
  * @head_id: the commit id for the original file version.
  *           It's optional. If it's NULL, the current repo head will be used.
+ * @create: Create if not exist
  * @new_file_id: The return location of the new file id
  */
 int
@@ -323,7 +326,8 @@ seaf_repo_manager_put_file (SeafRepoManager *mgr,
                             const char *file_name,
                             const char *user,
                             const char *head_id,
-                            char **new_file_id,                            
+                            int create,
+                            char **new_file_id,
                             GError **error);
 
 int
@@ -336,6 +340,7 @@ seaf_repo_manager_put_file_blocks (SeafRepoManager *mgr,
                                    const char *user,
                                    const char *head_id,
                                    gint64 file_size,
+                                   int create,
                                    char **new_file_id,
                                    GError **error);
 

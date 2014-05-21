@@ -601,7 +601,7 @@ char *
 seafile_put_file (const char *repo_id, const char *temp_file_path,
                   const char *parent_dir, const char *file_name,
                   const char *user, const char *head_id,
-                  GError **error);
+                  int create, GError **error);
 
 /**
  * Add file blocks at once.
@@ -613,7 +613,8 @@ char *
 seafile_put_file_blocks (const char *repo_id, const char *parent_dir,
                          const char *file_name, const char *blockids_json,
                          const char *paths_json, const char *user,
-                         const char *head_id, gint64 file_size, GError **error);
+                         const char *head_id, gint64 file_size,
+                         int create, GError **error);
 
 
 int

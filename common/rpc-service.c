@@ -2534,7 +2534,7 @@ seafile_post_file (const char *repo_id, const char *temp_file_path,
 
     if (seaf_repo_manager_post_file (seaf->repo_mgr, repo_id,
                                      temp_file_path, parent_dir,
-                                     file_name, user,
+                                     file_name, user, NULL,
                                      error) < 0) {
         return -1;
     }
@@ -2619,7 +2619,7 @@ char *
 seafile_put_file (const char *repo_id, const char *temp_file_path,
                   const char *parent_dir, const char *file_name,
                   const char *user, const char *head_id,
-                  GError **error)
+                  int create, GError **error)
 {
     if (!repo_id || !temp_file_path || !parent_dir || !file_name || !user) {
         g_set_error (error, SEAFILE_DOMAIN, SEAF_ERR_BAD_ARGS,
@@ -2636,7 +2636,7 @@ seafile_put_file (const char *repo_id, const char *temp_file_path,
     seaf_repo_manager_put_file (seaf->repo_mgr, repo_id,
                                 temp_file_path, parent_dir,
                                 file_name, user, head_id,
-                                &new_file_id, error);
+                                create, &new_file_id, error);
     return new_file_id;
 }
 
@@ -2644,7 +2644,8 @@ char *
 seafile_put_file_blocks (const char *repo_id, const char *parent_dir,
                          const char *file_name, const char *blockids_json,
                          const char *paths_json, const char *user,
-                         const char *head_id, gint64 file_size, GError **error)
+                         const char *head_id, gint64 file_size,
+                         int create, GError **error)
 {
     if (!repo_id || !parent_dir || !file_name
         || !blockids_json || ! paths_json || !user) {
@@ -2663,7 +2664,7 @@ seafile_put_file_blocks (const char *repo_id, const char *parent_dir,
                                        parent_dir, file_name,
                                        blockids_json, paths_json,
                                        user, head_id, file_size,
-                                       &new_file_id, error);
+                                       create, &new_file_id, error);
     return new_file_id;
 }
 

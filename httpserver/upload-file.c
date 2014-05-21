@@ -914,6 +914,7 @@ update_cb(evhtp_request_t *req, void *arg)
                                       filename,
                                       fsm->user,
                                       head_id,
+                                      0,
                                       &error);
     if (error) {
         if (g_strcmp0 (error->message, "file does not exist") == 0) {
@@ -949,9 +950,11 @@ update_api_cb(evhtp_request_t *req, void *arg)
     RecvFSM *fsm = arg;
     SearpcClient *rpc_client = NULL;
     char *target_file, *parent_dir = NULL, *filename = NULL;
+    char *create_str = NULL;
     const char *head_id = NULL;
     GError *error = NULL;
     int error_code = ERROR_INTERNAL;
+    int create = 0;
     char *new_file_id = NULL;
 
     if (!fsm || fsm->state == RECV_ERROR)
@@ -964,6 +967,17 @@ update_api_cb(evhtp_request_t *req, void *arg)
         return;
     }
 
+    create_str = g_hash_table_lookup (fsm->form_kvs, "create");
+    if (create_str) {
+        create = atoi(create_str);
+        if (create != 0 && create != 1) {
+            seaf_warning ("[Update] Invalid argument create: %s.\n", create_str);
+            evbuffer_add_printf(req->buffer_out, "Invalid argument.\n");
+            set_content_length_header (req);
+            evhtp_send_reply (req, EVHTP_RES_BADREQ);
+            return;
+        }
+    }
     target_file = g_hash_table_lookup (fsm->form_kvs, "target_file");
     if (!target_file) {
         seaf_warning ("[Update] No target file given.\n");
@@ -998,6 +1012,7 @@ update_api_cb(evhtp_request_t *req, void *arg)
                                     filename,
                                     fsm->user,
                                     head_id,
+                                    create,
                                     &error);
     g_free (parent_dir);
     g_free (filename);
@@ -1067,14 +1082,30 @@ update_blks_api_cb(evhtp_request_t *req, void *arg)
     SearpcClient *rpc_client = NULL;
     char *target_file, *parent_dir = NULL, *filename = NULL, *size_str = NULL;
     const char *head_id = NULL;
+    char *create_str = NULL;
     GError *error = NULL;
     int error_code = ERROR_INTERNAL;
     char *new_file_id = NULL;
     char *blockids_json, *tmp_files_json;
     gint64 file_size = -1;
+    int create = 0;
 
     if (!fsm || fsm->state == RECV_ERROR)
         return;
+
+    create_str = g_hash_table_lookup (fsm->form_kvs, "create");
+    if (create_str) {
+        create = atoi(create_str);
+        if (create != 0 && create != 1) {
+            seaf_warning ("[Update-blks] Invalid argument create: %s.\n",
+                          create_str);
+            evbuffer_add_printf(req->buffer_out, "Invalid argument.\n");
+            set_content_length_header (req);
+            evhtp_send_reply (req, EVHTP_RES_BADREQ);
+            return;
+        }
+    }
+
     target_file = g_hash_table_lookup (fsm->form_kvs, "target_file");
     size_str = g_hash_table_lookup (fsm->form_kvs, "file_size");
     if (size_str)  file_size = atoll(size_str);
@@ -1115,6 +1146,7 @@ update_blks_api_cb(evhtp_request_t *req, void *arg)
                                            fsm->user,
                                            head_id,
                                            file_size,
+                                           create,
                                            &error);
     g_free (blockids_json);
     g_free (tmp_files_json);
@@ -1260,6 +1292,7 @@ update_blks_ajax_cb(evhtp_request_t *req, void *arg)
                                            fsm->user,
                                            head_id,
                                            file_size,
+                                           0,
                                            &error);
     g_free (blockids_json);
     g_free (tmp_files_json);
@@ -1404,6 +1437,7 @@ update_ajax_cb(evhtp_request_t *req, void *arg)
                                     filename,
                                     fsm->user,
                                     head_id,
+                                    0,
                                     &error);
     g_free (parent_dir);
     g_free (filename);
